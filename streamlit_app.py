@@ -180,10 +180,24 @@ def load_model():
         # Load weights
         model_path = "backend/plant_disease_model-2.pth"
         if os.path.exists(model_path):
-            model.load_state_dict(torch.load(model_path, map_location='cpu'))
-            model.eval()
-            st.success("✅ Model loaded successfully!")
-            return model
+            try:
+                # Load with strict=False to handle potential version differences
+                state_dict = torch.load(model_path, map_location='cpu')
+                model.load_state_dict(state_dict, strict=False)
+                model.eval()
+                st.success("✅ Model loaded successfully!")
+                return model
+            except Exception as e:
+                st.warning(f"⚠️ Model loading had compatibility issues: {str(e)}")
+                st.info("🔄 Trying with strict=False...")
+                try:
+                    model.load_state_dict(state_dict, strict=False)
+                    model.eval()
+                    st.success("✅ Model loaded with compatibility mode!")
+                    return model
+                except Exception as e2:
+                    st.error(f"❌ Failed to load model: {str(e2)}")
+                    return None
         else:
             st.error(f"❌ Model file not found at {model_path}")
             return None
