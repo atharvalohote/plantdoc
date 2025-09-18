@@ -77,4 +77,4 @@ jspm_packages/
 .streamlit/secrets.toml
 
 # Model files (if too large)
-# backend/plant_disease_model-2.pth
+backend/plant_disease_model-2.pth
